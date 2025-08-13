@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:3.5 
+    container_name: localstack_main
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:8080:8080"
+    environment:
+      - SERVICES=s3,sqs
+      - DEBUG=0 
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - ./localstack-init:/etc/localstack/init/ready.d/
+      - /var/run/docker.sock:/var/run/docker.sock
+      - localstack_data:/var/lib/localstack
+
+  app:
+    build: .
+    container_name: flask_app
+    command: python app.py
+    volumes:
+      - .:/app
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=sa-east-1
+    depends_on:
+      - localstack
+    ports:
+      - "5000:5000"
+
+  worker:
+    build: .
+    container_name: flask_worker
+    command: python worker.py
+    volumes:
+      - .:/app
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=sa-east-1
+    depends_on:
+      - localstack
+    ports:
+      - "5001:5001"
+
+# Define o volume nomeado que será usado pelo serviço localstack
+
+volumes:
+  localstack_data:
+    driver: local

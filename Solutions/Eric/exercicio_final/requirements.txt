@@ -1,0 +1,6 @@
+flask
+boto3
+opencv-python
+numpy
+python-dotenv
+flask-restx
