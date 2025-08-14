@@ -23,30 +23,45 @@ import os
 ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL", "sua_info")
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "test")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "test")
-AWS_REGION = os.getenv("AWS_REGION", "sua_info")
+AWS_REGION = os.getenv("AWS_REGION", "sua_info") #Use sa-east-1 host br
 
-S3_BUCKET_INPUT = os.getenv("S3_BUCKET_INPUT", "sua_info")
-S3_BUCKET_PROCESSED = os.getenv("S3_BUCKET_PROCESSED", "sua_info")
+S3_BUCKET_INPUT = os.getenv("S3_BUCKET_INPUT", "image-input") 
+S3_BUCKET_PROCESSED = os.getenv("S3_BUCKET_PROCESSED", "image-processed") 
 
-SQS_QUEUE_INPUT = os.getenv("SQS_QUEUE_INPUT", "sua_info")
-SQS_QUEUE_PROCESSED = os.getenv("SQS_QUEUE_PROCESSED", "sua_info")
+SQS_QUEUE_INPUT = os.getenv("SQS_QUEUE_INPUT", "new-image-input.fifo") #Fila do tipo fifo
+SQS_QUEUE_PROCESSED = os.getenv("SQS_QUEUE_PROCESSED", "new-image-processed.fifo") #Fila do tipo fifo
 
-SQS_MESSAGE_GROUP_ID = os.getenv("SQS_MESSAGE_GROUP_ID", "sua_info")
+SQS_MESSAGE_GROUP_ID = os.getenv("SQS_MESSAGE_GROUP_ID", "image-group") 
 ```
 
 ## Etapa 3: Iniciar o container
 Agora que temos o ambiente configurado, com docker instalado e com as configurações de env feitas, vamos partir para a iniciaização do container através dos comandos abaixo:
-
+Garanta que você esta no diretorio:
 ```bash
 cd /diretorio_do_repositorio
+```
+Execute os comandos abaixo:
+
+Se for linux execute este comando primeiro, se não apenas ignore e prossiga o fluxo.
+```bash
+chmod +x localstack-init/init-aws.sh
+```
+---
+```bash
 docker-compose build #Build do container
 ```
+
+```bash
+docker-compose up #Executa os containers
+
+docker-compose up -d #Caso queira deixar em segundo plano
+```
+
 Verifique se os container estão em execução devidamente:
 ```bash
 docker ps
 ```
-
-Caso queira parar o container:
+Caso queira parar os containers:
 ```bash
 docker-compose down
 ```
